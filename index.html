@@ -1,139 +1,250 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+
+<html lang="so">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Laam</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #0f0f0f, #1e1e1e);
-      color: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 20px;
-    }
-
-    h1 {
-      font-size: 3rem;
-      color: gold;
-      text-shadow: 2px 2px 10px #ffaa00;
-      margin-bottom: 20px;
-    }
-
-    .top-widget {
-      width: 100%;
-      max-width: 1000px;
-      margin-bottom: 20px;
-      overflow-x: auto;
-    }
-
-    .description {
-      max-width: 800px;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-left: 5px solid gold;
-      padding: 25px 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-      line-height: 1.8;
-      margin-bottom: 30px;
-    }
-
-    .xlm-widget {
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto 20px auto;
-      text-align: center;
-    }
-
-    .explorer {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .explorer a {
-      background-color: gold;
-      color: #000;
-      font-weight: bold;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-      display: inline-block;
-      transition: background-color 0.3s ease;
-    }
-
-    .explorer a:hover {
-      background-color: #ffd700;
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
-
-      .description {
-        padding: 15px 20px;
-      }
-    }
-  </style>
-
-  <!-- LiveCoinWatch Widget Script -->
-  <script defer src="https://www.livecoinwatch.com/static/lcw-widget.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Labis Laundry — Mobile Receipt / Invoice</title>
+<style>
+/* Mobile-first styles */
+body { font-family: Inter, system-ui, sans-serif; background: #f7fafc; margin:0; padding:16px; color:#0f172a; }
+.container { width:100%; margin:0 auto; padding:8px; }
+.card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 6px 18px rgba(2,6,23,0.06); }
+h1{ font-size:20px; margin:0 0 4px 0; }
+.muted{ font-size:13px; color:#6b7280; }
+input, select{ width:100%; padding:10px; font-size:14px; border-radius:8px; border:1px solid #e6e9ef; box-sizing:border-box; margin-bottom:8px; }
+table{ width:100%; border-collapse:collapse; margin-top:12px; display:block; overflow-x:auto; }
+th, td{ padding:8px 6px; text-align:left; border-bottom:1px solid #f1f5f9; font-size:14px; white-space:nowrap; }
+th{ font-weight:600; color:#6b7280; font-size:13px; }
+.text-right{text-align:right;}
+.tabular{font-variant-numeric:tabular-nums;}
+.grid{display:grid; gap:12px;}
+.row-2{ grid-template-columns: 1fr; }
+.controls{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
+button{ padding:10px; border-radius:8px; font-size:14px; cursor:pointer; border:none; background:#111827; color:#fff; flex:1; min-width:100px; }
+button.ghost{ background:transparent; color:#111827; border:1px solid #e6e9ef; }
+button.warn{ background:#f59e0b; color:#1f2937; }
+.badge{ padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px; display:inline-block; margin-top:4px; }
+.paid{ background:#ecfdf5; color:#065f46; border:1px solid rgba(16,185,129,0.12); }
+.unpaid{ background:#fffbeb; color:#92400e; border:1px solid rgba(245,158,11,0.12); }
+.totals .box{ width:100%; padding:12px; border-radius:8px; border:1px solid #f1f5f9; margin-top:12px; }
+@media(min-width: 600px){
+  .row-2{ grid-template-columns: 1fr 320px; }
+  .totals .box{ width:320px; margin-left:auto; }
+  table{ display:table; }
+}
+</style>
 </head>
-<body>
+<body><div class="container">
+  <div class="card" id="invoiceCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+      <div>
+        <h1 contenteditable="true" id="bizName">Labis Laundry</h1>
+        <div class="muted" contenteditable="true" id="bizAddress">Cinwaan: --</div>
+        <div class="muted" contenteditable="true" id="bizPhone">Tel: +2527xxxxxxx</div>
+      </div>
+      <div style="text-align:right; margin-top:8px;">
+        <div class="small">Invoice # <input id="invoiceNo" type="number" value="1" style="width:80px; padding:6px;border-radius:6px;border:1px solid #e6e9ef"></div>
+        <div class="small" style="margin-top:6px">Taariikh: <input id="invoiceDate" type="date"></div>
+        <div id="paidBadge" style="margin-top:10px"></div>
+      </div>
+    </div><hr style="margin:12px 0;border:none;border-top:1px solid #f1f5f9">
 
-  <!-- Title -->
-  <h1>Laam</h1>
+<div class="grid row-2">
+  <div>
+    <label>Macmiil (Magac)</label>
+    <input id="custName" type="text" placeholder="Magaca Macmiilka">
+    <label>Telefoon</label>
+    <input id="custPhone" type="text" placeholder="Tel Macmiilka">
+  </div>
+  <div>
+    <label>Xaaladda Bixinta</label>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <label><input type="radio" name="paidState" value="paid" id="paidYes"> <strong>Paid</strong></label>
+      <label><input type="radio" name="paidState" value="unpaid" id="paidNo" checked> <strong>Unpaid</strong></label>
+    </div>
+    <label style="margin-top:8px">Lacag (Currency)</label>
+    <select id="currency">
+      <option value="ETB">ETB (Br)</option>
+      <option value="USD">USD ($)</option>
+      <option value="EUR">EUR (€)</option>
+    </select>
+  </div>
+</div>
 
-  <!-- Top Marquee Widget -->
-  <div class="top-widget">
-    <div class="livecoinwatch-widget-5"
-         lcw-base="USD"
-         lcw-color-tx="#ffffff"
-         lcw-marquee-1="coins"
-         lcw-marquee-2="none"
-         lcw-marquee-items="10">
+<div style="margin-top:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div><strong>Alaabooyinka (Laundry)</strong></div>
+    <div class="controls">
+      <select id="quickAdd">
+        <option value="">+ Ku dar shay degdeg...</option>
+        <option value="Shaadh">Shaadh (Shirt)</option>
+        <option value="Garan">Garan (Jacket)</option>
+        <option value="Surwal">Surwal (Pants)</option>
+        <option value="Macawis">Macawis (Dress)</option>
+        <option value="Suudh">Suudh (Suit)</option>
+      </select>
+      <button class="ghost" id="addCustom">+ Custom</button>
+      <button class="ghost" id="resetBtn">Invoice Cusub</button>
     </div>
   </div>
 
-  <!-- Token Description -->
-  <div class="description">
-    <p>
-      <strong>Laam Coin</strong> is a native token built on <strong>Stellar</strong>, designed to be a modern solution for digital currency.
-      It has a <strong>fixed max supply of 1,335,577 LAAM</strong> — minted only once to preserve scarcity and long-term value.
-    </p>
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>Nooca / Item</th>
+        <th>Sharaxaad</th>
+        <th class="text-right">Tiro</th>
+        <th class="text-right">Qiime</th>
+        <th class="text-right">Wadarta</th>
+        <th class="no-print"></th>
+      </tr>
+    </thead>
+    <tbody id="itemsBody"></tbody>
+  </table>
+</div>
 
-    <p>
-      Laam is an open project aimed at supporting real-world use cases such as property sales, vehicle rentals, and community-based commerce.
-      It can be easily added to popular wallets by creating a <em>trustline</em>, including <strong>Lobstr</strong>, <strong>Solar</strong>, and <strong>Freighter</strong>.
-    </p>
-
-    <p>
-      The token is designed to be secure, non-inflationary, and fully tradable — with no need for a liquidity pool.
-    </p>
+<div class="totals">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between"><div class="small">Isku-geyn</div><div class="tabular" id="subtotal">Br 0.00</div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px"><div class="small">Canshuur</div><div class="tabular" id="taxAmount">Br 0.00</div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px"><div class="small">Dhimis</div><div class="tabular" id="discountAmount">Br 0.00</div></div>
+    <hr style="margin:8px 0;border:none;border-top:1px solid #f1f5f9">
+    <div style="display:flex;justify-content:space-between"><div style="font-weight:700">Wadarta</div><div style="font-size:18px;font-weight:800" id="grandTotal">Br 0.00</div></div>
   </div>
+</div>
 
-  <!-- XLM Widget (Centered Below Description) -->
-  <div class="xlm-widget">
-    <div class="livecoinwatch-widget-6"
-         lcw-coin="XLM"
-         lcw-base="USD"
-         lcw-period="d"
-         lcw-color-tx="#ffffff"
-         lcw-color-bg="#505153"
-         lcw-border-w="0">
-    </div>
+<div style="margin-top:16px;border-top:1px dashed #eef2f7;padding-top:12px">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="small muted">TIN/VAT: <span contenteditable id="taxId">TIN/VAT</span></div>
+    <div style="text-align:right" class="muted small">Mahadsanid! — labis laundary</div>
   </div>
+</div>
 
-  <!-- Stellar Explorer Button -->
-  <div class="explorer">
-    <a href="https://stellar.expert/explorer/public/asset/Laam-GAL4ECDAXNBMJYFCWIJ32HKVIRLCNEXY664CAZYI3EINQWPLXTMEPR64" target="_blank">
-      View Laam on Stellar Explorer
-    </a>
+<div class="controls no-print" style="margin-top:12px;">
+  <button id="printBtn">Daabac / Save PDF</button>
+  <button id="exportJson" class="ghost">Export JSON</button>
+  <button id="clearStorage" class="warn">Tirtir Xogta</button>
+</div>
+
   </div>
+</div><!-- html2pdf library --><script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script><script>
+(function(){
+const STORAGE='labis_receipt_v1';
+const currencySymbols={ETB:'Br',USD:'$',EUR:'€'};
 
+const itemsBody=document.getElementById('itemsBody');
+const quickAdd=document.getElementById('quickAdd');
+const addCustom=document.getElementById('addCustom');
+const invoiceNo=document.getElementById('invoiceNo');
+const invoiceDate=document.getElementById('invoiceDate');
+const custName=document.getElementById('custName');
+const custPhone=document.getElementById('custPhone');
+const subtotalEl=document.getElementById('subtotal');
+const taxAmountEl=document.getElementById('taxAmount');
+const discountAmountEl=document.getElementById('discountAmount');
+const grandTotalEl=document.getElementById('grandTotal');
+const printBtn=document.getElementById('printBtn');
+const exportJson=document.getElementById('exportJson');
+const resetBtn=document.getElementById('resetBtn');
+const clearStorage=document.getElementById('clearStorage');
+const paidYes=document.getElementById('paidYes');
+const paidNo=document.getElementById('paidNo');
+const paidBadge=document.getElementById('paidBadge');
+const currencySelect=document.getElementById('currency');
+const bizName=document.getElementById('bizName');
+const bizAddress=document.getElementById('bizAddress');
+const bizPhone=document.getElementById('bizPhone');
+const taxId=document.getElementById('taxId');
+const invoiceCard=document.getElementById('invoiceCard');
+
+let state={
+  biz:{name:'Labis Laundry', address:'Cinwaan: --', phone:'+2527xxxxxxx', taxId:'TIN/VAT'},
+  invoiceNo:1,
+  invoiceDate:(new Date()).toISOString().slice(0,10),
+  customer:{name:'',phone:''},
+  currency:'ETB',
+  items:[],
+  taxRate:0,
+  discount:0,
+  isPaid:false
+};
+
+const uid=()=> 'id'+Math.random().toString(36).slice(2,9);
+const money=n=>Number(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function load(){
+  const raw=localStorage.getItem(STORAGE);
+  if(raw) try{Object.assign(state,JSON.parse(raw))}catch(e){console.warn('load err',e);}
+  if(!state.items||state.items.length===0) state.items=[{id:uid(),type:'Shaadh',name:'Shaadh',qty:1,price:0}];
+  renderAll();
+}
+function save(){localStorage.setItem(STORAGE,JSON.stringify(state));}
+
+function renderAll(){
+  bizName.innerText=state.biz.name||'Labis Laundry';
+  bizAddress.innerText=state.biz.address||'';
+  bizPhone.innerText=state.biz.phone||'';
+  taxId.innerText=state.biz.taxId||'';
+  invoiceNo.value=state.invoiceNo;
+  invoiceDate.value=state.invoiceDate;
+  custName.value=state.customer.name||'';
+  custPhone.value=state.customer.phone||'';
+  currencySelect.value=state.currency||'ETB';
+  paidYes.checked=state.isPaid===true;
+  paidNo.checked=state.isPaid===false;
+  renderBadge();
+  itemsBody.innerHTML='';
+  state.items.forEach(it=>{
+    const tr=document.createElement('tr');
+    const tdType=document.createElement('td');
+    const sel=document.createElement('select');
+    ['Shaadh','Garan','Surwal','Macawis','Suudh','Custom'].forEach(opt=>{
+      const o=document.createElement('option'); o.value=opt;o.innerText=opt;if(opt===it.type)o.selected=true; sel.appendChild(o);
+    });
+    sel.addEventListener('change', e=>{ it.type=e.target.value; it.name=e.target.value; save(); renderAll(); });
+    tdType.appendChild(sel);
+
+    const tdName=document.createElement('td');
+    const inName=document.createElement('input'); inName.type='text'; inName.value=it.name||'';
+    inName.addEventListener('input', e=>{ it.name=e.target.value; save(); renderTotals(); });
+    tdName.appendChild(inName);
+
+    const tdQty=document.createElement('td'); tdQty.className='text-right';
+    const inQty=document.createElement('input'); inQty.type='number'; inQty.min=0; inQty.value=it.qty; inQty.style.width='70px';
+    inQty.addEventListener('input', e=>{ it.qty=Number(e.target.value||0); save(); renderTotals(); }); tdQty.appendChild(inQty);
+
+    const tdPrice=document.createElement('td'); tdPrice.className='text-right';
+    const inPrice=document.createElement('input'); inPrice.type='number'; inPrice.min=0; inPrice.step='0.01'; inPrice.value=it.price; inPrice.style.width='90px';
+    inPrice.addEventListener('input', e=>{ it.price=Number(e.target.value||0); save(); renderTotals(); }); tdPrice.appendChild(inPrice);
+
+    const tdLine=document.createElement('td'); tdLine.className='text-right tabular';
+    tdLine.innerText=currencySymbols[state.currency]+' '+money((it.qty||0)*(it.price||0));
+
+    const tdAct=document.createElement('td'); tdAct.className='no-print';
+    const del=document.createElement('button'); del.className='ghost'; del.innerText='Delete';
+    del.addEventListener('click', ()=>{ state.items=state.items.filter(x=>x.id!==it.id); save(); renderAll(); }); tdAct.appendChild(del);
+
+    tr.append(tdType, tdName, tdQty, tdPrice, tdLine, tdAct);
+    itemsBody.appendChild(tr);
+  });
+  clearStorage.addEventListener('click', ()=>{
+    if(confirm('Ma hubtaa inaad tirtirayso xogta localStorage?')) { localStorage.removeItem(STORAGE); location.reload(); }
+  });
+
+  // editable biz fields save
+  bizName.addEventListener('input', ()=>{ state.biz.name = bizName.innerText; save(); });
+  bizAddress.addEventListener('input', ()=>{ state.biz.address = bizAddress.innerText; save(); });
+  bizPhone.addEventListener('input', ()=>{ state.biz.phone = bizPhone.innerText; save(); });
+  taxId.addEventListener('input', ()=>{ state.biz.taxId = taxId.innerText; save(); });
+
+  // initial load: set date default to today if empty
+  document.addEventListener('DOMContentLoaded', ()=>{
+    load();
+    if(!state.invoiceDate) { state.invoiceDate = (new Date()).toISOString().slice(0,10); invoiceDate.value = state.invoiceDate; save(); }
+  });
+
+})();
+</script>
 </body>
-  </html>
+</html>
